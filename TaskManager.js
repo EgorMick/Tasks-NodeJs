@@ -14,7 +14,7 @@ class TaskManager extends EventEmitter {
     loadTasks() {
         fs.readFile('tasks.json', 'utf-8',(err, data) => {
           if(err){
-            console.error("error reading file:",err);
+            console.error("Error reading file:",err);
             return;
           }
           const tasksdata = JSON.parse(data);
