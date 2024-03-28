@@ -8,10 +8,11 @@ import TaskModel from "./TaskModel.js";
 import mongoose from "mongoose";
 import 'dotenv/config';
 import {validateTaskData} from './middlewares/validateTaskData.js';
-
+import cors from "cors";
 
 //Создание сервера
 const app = express();
+app.use(cors());
 app.use(express.json());
 const PORT = 3000;
 app.get('/', (req, res) => {
@@ -24,46 +25,61 @@ app.listen(PORT, () => {
 
 //подключение к БД
 const mongoUri = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`;
-
 mongoose.connect(mongoUri)
 
-
+// ОТОБРАЖЕНИЕ ЗАДАЧ
 app.get('/tasks', async (req, res) => {
     try {
-        const tasks = await TaskModel.find();
+        const tasks = await TaskModel.find({});
+        res.setHeader('Content-Type', 'application/json');
         res.json(tasks);
-        
     }
     catch (err) {
         res.status(500).send(err.message);
     }
 });
 
-
-app.post('/tasks', async (req, res) => { 
+//ИЗМЕНЕНИЕ СТАТУСА
+app.post("/updateTaskStatus", async (req, res) => {
     try {
-        const newTask = new TaskModel(req.body);
+      const taskName = req.body.name;
+      const newStatus = req.body.status;
+  
+      const task = await TaskModel.findOne({ description: taskName });
+      if (!task) {
+        return res.status(404).json({ error: "Task not found" });
+      }
+  
+      task.status = newStatus;
+      await task.save();
+  
+      res.status(200).json({ message: "Status updated successfully" });
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  });
+
+  //УДАЛЕНИЕ ЗАДАЧИ ИЗ БД
+  app.delete('/tasks', async (req, res) => {
+    try {
+      await TaskModel.deleteMany({ status: 'Корзина' });
+      res.sendStatus(200);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  });
+
+  //ДОБАВЛЕНИЕ НОВОЙ ЗАДАЧИ
+  app.post('/tasks', async (req, res) => { 
+    
+        const newTaskData = req.body;
+        newTaskData.status = "В процессе";
+        
+        const newTask = new TaskModel(newTaskData);
         const savedTask = await newTask.save(); 
-        res.status(201).json(savedTask);
-    } catch (err) {
-        res.status(400).send(err.message);
-    }
 });
 
-app.delete('/tasks/:id', async (req, res) => {
-    const TaskId = req.params.id;
-    try {
-        const task = await TaskModel.findById(TaskId); 
-        if (!task) {
-            return res.status(404).send('Task not found'); 
-        }
-        await TaskModel.deleteOne({ _id: TaskId }); 
-        res.status(204).send();
-    } catch (err) {
-        res.status(400).send(err.message);
-    }
-});
-
+//ВАЛИДАЦИЯ
 app.post('/tasks', validateTaskData, async (req, res) => {
     // обработка запроса...
     try {
@@ -77,14 +93,7 @@ app.post('/tasks', validateTaskData, async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
+/*
 const taskManager = new TaskManager();
 
 function printRed(str){
@@ -105,3 +114,5 @@ taskManager.on('taskDeleted', (TaskId) => {
     printRed(`Event: Task with ID ${TaskId} deleted`);
     console.log();
 });
+
+*/

@@ -2,7 +2,7 @@ POST http://localhost:3000/tasks
 Content-Type: application/json
 
 {
-    "id": "100",
-    "description": 123,
-    "status": "To Do"
+    "id": "3",
+    "description": "Тренировка",
+    "status": "Корзина"
 }

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/css.css">
+    <title>Список задач</title>
+</head>
+
+<body>
+    <header>Список задач</header>
+
+    <main>
+        <button class="buttonLoad">Загрузить данные</button>
+        <div class="window-add-task" id="add-form">
+            <h2>Новая задача</h2>
+            <div class="window-add-task-item">
+                <input id="taskInput" type="text" placeholder="Название задачи...">
+                <button type="button"> + Добавить</button>
+            </div>
+        </div>
+
+        <section>
+            <section class="tasks-container">
+
+                <div id="goOnList">
+                    <div class="goOn">В процессе</div>
+                    <div class="tasks">
+
+                    </div>
+                    <button type="button" id="save" class="buttonSave">Выполненно</button>
+                </div>
+
+                <div id="completeList">
+                    <div class="complete">Готово</div>
+                    <div class="tasks">
+
+                    </div>
+                    <button type="button" id="delete" class="buttonDelete">Удалить</button>
+                </div>
+
+                <div id="deleteList">
+                    <div class="delete">Корзина</div>
+                    <div class="tasks">
+
+                    </div>
+                    <button id="cleanBin" class="buttonDelete" type="button">Очистить</button>
+                </div>
+
+            </section>
+        </section>
+    </main>
+    <script src="main.js"></script>
+</body>
+
+</html>
